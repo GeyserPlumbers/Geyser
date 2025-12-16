@@ -23,30 +23,24 @@
  * @link https://github.com/GeyserMC/Geyser
  */
 
-package org.geysermc.geyser.api.item.custom.v2.component;
+package org.geysermc.geyser.registry.mappings.components.readers;
 
-import java.util.Set;
+import com.google.gson.JsonElement;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.geysermc.geyser.api.item.custom.v2.component.DataComponent;
+import org.geysermc.geyser.item.exception.InvalidCustomMappingsFileException;
+import org.geysermc.geyser.registry.mappings.components.DataComponentReader;
 
-/**
- * A map of data components to their values. Mainly used internally when mapping custom items.
- */
-public interface DataComponentMap {
+public class UnitReader<V> extends DataComponentReader<V> {
+    private final V instance;
 
-    /**
-     * @return the value of the given component, or null if it is not in the map.
-     */
-    <T> T get(DataComponent<T> type);
-
-    /**
-     * @return the value of the given component, or {@code fallback} if it is null.
-     */
-    default <T> T getOrDefault(DataComponent<T> type, T fallback) {
-        T value = get(type);
-        return value == null ? fallback : value;
+    public UnitReader(DataComponent<V> type, V instance) {
+        super(type);
+        this.instance = instance;
     }
 
-    /**
-     * @return all data components in this map.
-     */
-    Set<DataComponent<?>> keySet();
+    @Override
+    protected V readDataComponent(@NonNull JsonElement element, String... context) throws InvalidCustomMappingsFileException {
+        return instance;
+    }
 }

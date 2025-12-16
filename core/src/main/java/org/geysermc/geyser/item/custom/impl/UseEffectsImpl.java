@@ -23,30 +23,29 @@
  * @link https://github.com/GeyserMC/Geyser
  */
 
-package org.geysermc.geyser.api.item.custom.v2.component;
+package org.geysermc.geyser.item.custom.impl;
 
-import java.util.Set;
+import org.checkerframework.common.value.qual.IntRange;
+import org.geysermc.geyser.api.item.custom.v2.component.java.UseEffects;
 
-/**
- * A map of data components to their values. Mainly used internally when mapping custom items.
- */
-public interface DataComponentMap {
+public record UseEffectsImpl(@IntRange(from = 0, to = 1) float speedMultiplier) implements UseEffects {
+    public static final UseEffects DEFAULT = new Builder().build();
 
-    /**
-     * @return the value of the given component, or null if it is not in the map.
-     */
-    <T> T get(DataComponent<T> type);
+    public static class Builder implements UseEffects.Builder {
+        private float speedMultiplier = 0.2F;
 
-    /**
-     * @return the value of the given component, or {@code fallback} if it is null.
-     */
-    default <T> T getOrDefault(DataComponent<T> type, T fallback) {
-        T value = get(type);
-        return value == null ? fallback : value;
+        @Override
+        public Builder speedMultiplier(@IntRange(from = 0, to = 1) float speedMultiplier) {
+            if (speedMultiplier < 0.0F || speedMultiplier > 1.0F) {
+                throw new IllegalArgumentException("speed multiplier must be between 0 and 1 (inclusive)");
+            }
+            this.speedMultiplier = speedMultiplier;
+            return this;
+        }
+
+        @Override
+        public UseEffects build() {
+            return new UseEffectsImpl(speedMultiplier);
+        }
     }
-
-    /**
-     * @return all data components in this map.
-     */
-    Set<DataComponent<?>> keySet();
 }

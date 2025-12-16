@@ -23,30 +23,28 @@
  * @link https://github.com/GeyserMC/Geyser
  */
 
-package org.geysermc.geyser.api.item.custom.v2.component;
+package org.geysermc.geyser.registry.mappings.components.readers;
 
-import java.util.Set;
+import com.google.gson.JsonElement;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.geysermc.geyser.api.item.custom.v2.component.java.ItemDataComponents;
+import org.geysermc.geyser.api.item.custom.v2.component.java.UseEffects;
+import org.geysermc.geyser.item.custom.impl.UseEffectsImpl;
+import org.geysermc.geyser.item.exception.InvalidCustomMappingsFileException;
+import org.geysermc.geyser.registry.mappings.components.DataComponentReader;
+import org.geysermc.geyser.registry.mappings.util.MappingsUtil;
+import org.geysermc.geyser.registry.mappings.util.NodeReader;
 
-/**
- * A map of data components to their values. Mainly used internally when mapping custom items.
- */
-public interface DataComponentMap {
+public class UseEffectsReader extends DataComponentReader<UseEffects> {
 
-    /**
-     * @return the value of the given component, or null if it is not in the map.
-     */
-    <T> T get(DataComponent<T> type);
-
-    /**
-     * @return the value of the given component, or {@code fallback} if it is null.
-     */
-    default <T> T getOrDefault(DataComponent<T> type, T fallback) {
-        T value = get(type);
-        return value == null ? fallback : value;
+    public UseEffectsReader() {
+        super(ItemDataComponents.USE_EFFECTS);
     }
 
-    /**
-     * @return all data components in this map.
-     */
-    Set<DataComponent<?>> keySet();
+    @Override
+    protected UseEffects readDataComponent(@NonNull JsonElement element, String... context) throws InvalidCustomMappingsFileException {
+        return new UseEffectsImpl(
+            MappingsUtil.readOrDefault(element, "speed_multiplier", NodeReader.boundedDouble(0.0, 1.0).andThen(Double::floatValue), 0.2F, context)
+        );
+    }
 }

@@ -23,30 +23,19 @@
  * @link https://github.com/GeyserMC/Geyser
  */
 
-package org.geysermc.geyser.api.item.custom.v2.component;
+package org.geysermc.geyser.api.item.custom.v2.component.java;
 
-import java.util.Set;
+import org.geysermc.geyser.api.GeyserApi;
 
 /**
- * A map of data components to their values. Mainly used internally when mapping custom items.
+ * The piercing weapon component is used to specify a stab-like attack when using the item.
  */
-public interface DataComponentMap {
+public interface PiercingWeapon {
 
     /**
-     * @return the value of the given component, or null if it is not in the map.
+     * @return the piercing weapon component
      */
-    <T> T get(DataComponent<T> type);
-
-    /**
-     * @return the value of the given component, or {@code fallback} if it is null.
-     */
-    default <T> T getOrDefault(DataComponent<T> type, T fallback) {
-        T value = get(type);
-        return value == null ? fallback : value;
+    static PiercingWeapon instance() {
+        return GeyserApi.api().provider(PiercingWeapon.class);
     }
-
-    /**
-     * @return all data components in this map.
-     */
-    Set<DataComponent<?>> keySet();
 }

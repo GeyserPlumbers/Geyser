@@ -23,30 +23,28 @@
  * @link https://github.com/GeyserMC/Geyser
  */
 
-package org.geysermc.geyser.api.item.custom.v2.component;
+package org.geysermc.geyser.item.custom.impl;
 
-import java.util.Set;
+import org.checkerframework.checker.index.qual.Positive;
+import org.geysermc.geyser.api.item.custom.v2.component.java.SwingAnimation;
 
-/**
- * A map of data components to their values. Mainly used internally when mapping custom items.
- */
-public interface DataComponentMap {
+public record SwingAnimationImpl(@Positive int duration) implements SwingAnimation {
 
-    /**
-     * @return the value of the given component, or null if it is not in the map.
-     */
-    <T> T get(DataComponent<T> type);
+    public static class Builder implements SwingAnimation.Builder {
+        private int duration = 6;
 
-    /**
-     * @return the value of the given component, or {@code fallback} if it is null.
-     */
-    default <T> T getOrDefault(DataComponent<T> type, T fallback) {
-        T value = get(type);
-        return value == null ? fallback : value;
+        @Override
+        public Builder duration(int duration) {
+            if (duration <= 0) {
+                throw new IllegalArgumentException("duration must be positive");
+            }
+            this.duration = duration;
+            return this;
+        }
+
+        @Override
+        public SwingAnimation build() {
+            return new SwingAnimationImpl(duration);
+        }
     }
-
-    /**
-     * @return all data components in this map.
-     */
-    Set<DataComponent<?>> keySet();
 }
